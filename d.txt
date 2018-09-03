@@ -1,0 +1,4 @@
+{'website': 'www.123.com', 'password': 'asdfghjkl'}
+{'website': 'www.hao.com', 'password': '123456789'}
+{'website': 'www', 'password': 'sss'}
+{'website': 'sss', 'password': 'ddddd'}
