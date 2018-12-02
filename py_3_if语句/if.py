@@ -42,3 +42,78 @@ print((1=="1") and (1!=1))  #两个条件为假
 print((1!="1") or (1==1))  #两个条件都为真
 print((1!="1") or (1!=1))  #一个条件为真
 print((1=="1") or (1!=1))  #两个条件为假
+
+#======================================================
+# 检查特定值是否包含在列表中
+# 有时候，执行操作前必须检查列表是否包含特定的值。
+# 结束用户的注册过程前，可能需要检查他提供的用户名是否已包含在用户名列表中。
+# 在地图程序中，可能需要检查用户提交的 位置是否包含在已知位置列表中。
+# 要判断特定的值是否已包含在列表中，可使用关键字in。
+print("\n")
+
+news = ['aaa', 'bbb', 'ccc', 'ddd', 'eee']
+new = "fff"
+# 检查特定值是否包含在列表中
+if new in news:
+    print(news)
+else:
+    print(news)
+
+# 检查特定值是否不包含在列表中
+if new not in news:
+    news.append(new)
+    print(news)
+else:
+    print(news)
+
+#======================================================
+# 布尔表达式
+# 术语：布尔表达式，是条件测试的别名。
+# 与条件表达式一样，布尔表达式的结果要么为True，要么为False。
+# 布尔值通常用于记录条件，如游戏是否正在运行，或用户是否可以编辑网站的特定内容
+print("\n")
+
+news = ['aaa', 'bbb', 'ccc', 'ddd', 'eee']
+new = "fff"
+boolean_one = 1==1
+boolean_two = False
+boolean_three = new in news
+
+if boolean_one:
+    print("boolean_one True")
+else :
+    print("boolean_one false")
+
+if boolean_two:
+    print("boolean_two True")
+else :
+    print("boolean_two false")
+
+if boolean_three:
+    print("boolean_three True")
+else :
+    print("boolean_three false")
+
+# 在跟踪程序状态或程序中重要的条件方面，布尔值提供了一种高效的方式。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
