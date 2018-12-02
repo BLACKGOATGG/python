@@ -3,7 +3,7 @@
 # 经常需要检查超过两个的情形，为此可使用Python提供的if-elif-else结构。
 # Python只执行 if-elif-else结构中的一个代码块
 # 它依次检查每个条件测试，直到遇到通过了的条件测试。
-print("\n")
+print("\nif,elif else")
 
 age = 12
 price=0
