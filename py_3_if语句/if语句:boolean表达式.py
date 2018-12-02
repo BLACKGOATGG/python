@@ -11,19 +11,33 @@ boolean_one = 1==1
 boolean_two = False
 boolean_three = new in news
 
+# if boolean_one:
+#     print("boolean_one "+str(boolean_one))
+# else :
+#     print("boolean_one "+str(boolean_one))
+
+# if boolean_two:
+#     print("boolean_two "+str(boolean_two))
+# else :
+#     print("boolean_two "+str(boolean_two))
+
+# if boolean_three:
+#     print("boolean_three "+str(boolean_three))
+# else :
+#     print("boolean_three "+str(boolean_three))
 if boolean_one:
-    print("boolean_one True")
+    print("boolean_one",boolean_one)
 else :
-    print("boolean_one false")
+    print("boolean_one",boolean_one)
 
 if boolean_two:
-    print("boolean_two True")
+    print("boolean_two",boolean_two)
 else :
-    print("boolean_two false")
+    print("boolean_two",boolean_two)
 
 if boolean_three:
-    print("boolean_three True")
+    print("boolean_three",boolean_three)
 else :
-    print("boolean_three false")
+    print("boolean_three",boolean_three)
 
 # 在跟踪程序状态或程序中重要的条件方面，布尔值提供了一种高效的方式。
