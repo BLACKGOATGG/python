@@ -23,7 +23,7 @@ pop_motors_1 = motors.pop(0)
 print(motors)
 print(pop_motors_1)
 
-#remove 根据值删除元素
+#remove 根据值删除元素，只会删除第一个指定的元素
 motors.remove("ducati")
 print(motors)
 
