@@ -121,7 +121,7 @@ for line in lines:
 # 由于列表lines的每个元素都对应于文件中的一行，
 # 因此输出与文件内容完全一致。
 
-
+# 東南に行き 僕は君に恋し 三百六十五日 忘れることない Je　Le sais continue c’ est pas bon，（我已知道如若继续下去）A la fin tu restes pas longtemps （总有一天彼此会分离） 僕はいつも　Waiting For You
 
 
 
