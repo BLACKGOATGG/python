@@ -124,15 +124,74 @@ for line in lines:
 # 東南に行き 僕は君に恋し 三百六十五日 忘れることない Je　Le sais continue c’ est pas bon，（我已知道如若继续下去）A la fin tu restes pas longtemps （总有一天彼此会分离） 僕はいつも　Waiting For You
 
 
+# ===========================================================
+print('\n使用文件的内容')
+# 将文件读取到内存中后，就可以以任何方式使用这些数据了。
+
+filename = 'pi_digits.txt'
+
+with open(filename) as file_object:
+    lines = file_object.readlines()
+    print(lines)    
+
+pi_string = ''
+
+for line in lines:
+    pi_string += line.strip()
+
+print(pi_string)
+print(len(pi_string))
+
+# 注意
+# 读取文本文件时，Python将其中的所有文本都解读为字符串。
+# 如果你读取的是数字，并要将其作为数值使用，就必须使用函数int()将其转换为整数，或使用函数float()将其转换为浮点数。
 
 
+# ===========================================================
+print('\n包含一百万位的大型文件')
+# 对于你可处理的数据量，Python没有任何限制;
+# 只要系统的内存足够多，你想处理多少数据都可以。
+
+filename = 'pi_digits_big.txt'
+
+with open(filename) as file_object:
+    lines = file_object.readlines()  
+
+pi_string = ''
+
+for line in lines:
+    pi_string += line.strip()
+
+print(pi_string[:52] + '...')
+print(len(pi_string))
 
 
+# ===========================================================
+print('\n圆周率值中包含你的生日吗')
+# find() 方法检测字符串中是否包含子字符串 str ，如果指定 beg（开始） 和 end（结束） 范围，则检查是否包含在指定范围内
+# 如果指定范围内如果包含指定索引值，返回的是索引值在字符串中的起始位置。
+# 如果不包含索引值，返回-1。
 
+filename = 'pi_digits_big.txt'
 
+with open(filename) as file_object:
+    lines = file_object.readlines()  
 
+pi_string = ''
 
+for line in lines:
+    pi_string += line.strip()
 
+print(pi_string[:52] + '...')
+print(len(pi_string))
+
+# birthday = input("Enter your birthday, in the form mmddyy: ")
+birthday = '990617'
+if birthday in pi_string:
+    print("Your birthday appears in the first million digits of pi!")
+    print('location: ', pi_string.find(birthday)+1 )
+else:
+    print("Your birthday does not appear in the first million digits of pi.")
 
 
 
