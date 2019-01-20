@@ -11,7 +11,7 @@ print('存储数据')
 # 这是一种轻便格式，很有用，也易于学习。
 
 # 注意
-# JSON(JavaScriptObjectNotation)格式最初是为JavaScript开发的，但随后成了一种常见格式，被包括Python在内的众多语言采用。
+# JSON(JavaScript Object Notation)格式最初是为JavaScript开发的，但随后成了一种常见格式，被包括Python在内的众多语言采用。
 
 
 # ===========================================================
