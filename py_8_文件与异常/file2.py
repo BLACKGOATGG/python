@@ -27,8 +27,8 @@ print('\n写入空文件')
 filename = 'programming.txt'
 
 with open(filename, 'w') as file_object:
-    file_object.write("I love programming.\n")
-    file_object.write("I love programming2.\n")
+    file_object.write("I love programming.")
+    file_object.write("I love programming2.")
 
 # 果你要写入的文件不存在，函数open()将自动创建它。
 # 然而，以写入('w')模式打开文件时千万要小心，
@@ -39,7 +39,16 @@ with open(filename, 'w') as file_object:
 # Python只能将字符串写入文本文件。
 # 要将数值数据存储到文本文件中，必须先使用函数str()将其转换为字符串格式。
 
+print('\n写入多行')
+# 函数write()不会在你写入的文本末尾添加换行符，因此如果你写入多行时没有指定换行符，文件看起来可能不是你希望的那样:
+# 如果你打开programming.txt，将发现两行内容挤在一起:
+# 要让每个字符串都单独占一行，需要在write()语句中包含换行符:
 
+filename = 'programming1.txt'
 
+with open(filename, 'w') as file_object:
+    file_object.write("I love programming.\n")
+    file_object.write("I love programming2.\n")
 
-
+# 现在，输出出现在不同行中:
+# 像显示到终端的输出一样，还可以使用空格、制表符和空行来设置这些输出的格式。
