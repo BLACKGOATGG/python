@@ -12,3 +12,27 @@ print('存储数据')
 
 # 注意
 # JSON(JavaScriptObjectNotation)格式最初是为JavaScript开发的，但随后成了一种常见格式，被包括Python在内的众多语言采用。
+
+
+# ===========================================================
+print('\n使用json.dump()和json.load()')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
