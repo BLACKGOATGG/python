@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # ===========================================================
 print('存储数据')
 # 很多程序都要求用户输入某种信息，如让用户存储游戏首选项或提供要可视化的数据。
@@ -82,7 +81,7 @@ print('\n保存与读取用户生成的数据')
 # 如果这个文件不存在，我们就在except代码块中提示用户输入用户名，并将其存储在username.json中，以便程序再次运行时能够获取它:
 import json
 
-username = ''
+""" username = ''
 filename = 'username.json'
 
 try:
@@ -96,11 +95,50 @@ except FileNotFoundError:
         print("We'll remember you when you come back, " + username + "!")
 
 else:
-    print("Welcome back, " + username + "!")
+    print("Welcome back, " + username + "!") """
 
 
+# ===========================================================
+print('\n重构')
+# 你经常会遇到这样的情况:
+    # 代码能够正确地运行，但可做进一步的改进——将代码划分为一系列完成具体工作的函数。
+    # 这样的过程被称为重构。
+    # 重构让代码更清晰、更易于理解、更容 易扩展。
+import json
+
+def get_stored_username():
+    """如果存储了用户名，就获取它"""
+    username = ''
+    filename = 'username.json'
+    try:
+        with open(filename) as f_obj:
+                username = json.load(f_obj)
+
+    except FileNotFoundError:
+        return None
+    
+    else:
+        return username
 
 
+def get_new_username():
+    """提示用户输入用户名"""
+    username = input('what is your name?')
+    filename = 'username.json'
+    with open(filename, 'w') as f_obj:
+        json.dump(username,f_obj)
+
+    return username
 
 
+def greet_user():
+    """ 问候用户，并指出其名字 """
+    username = get_stored_username()
+    if username:
+        print("Welcome back, " + username + "!")
 
+    else:
+        username = get_new_username()
+        print("We'll remember you when you come back, " + username + "!")
+
+greet_user()
