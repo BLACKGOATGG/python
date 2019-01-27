@@ -131,30 +131,30 @@ OK
 
 """
 
-import unittest
-from survey import AnonymousSurvey
+# import unittest
+# from survey import AnonymousSurvey
 
-class TestAnonmyousSurvey(unittest.TestCase):
-    """针对AnonymousSurvey类的测试"""
-    def test_store_single_response(self):
-        """测试单个答案会被妥善地存储"""
-        question = "What language did you first learn to speak?"
-        my_survey = AnonymousSurvey(question)
-        my_survey.store_response('English')
-        self.assertIn('English', my_survey.responses) 
+# class TestAnonmyousSurvey(unittest.TestCase):
+#     """针对AnonymousSurvey类的测试"""
+#     def test_store_single_response(self):
+#         """测试单个答案会被妥善地存储"""
+#         question = "What language did you first learn to speak?"
+#         my_survey = AnonymousSurvey(question)
+#         my_survey.store_response('English')
+#         self.assertIn('English', my_survey.responses) 
 
-    def test_store_three_responses(self):
-        """测试三个答案会被妥善地存储"""
-        question = "What language did you first learn to speak?" 
-        my_survey = AnonymousSurvey(question)
-        responses = ['English', 'Spanish', 'Mandarin']
-        for response in responses:
-            my_survey.store_response(response)
+#     def test_store_three_responses(self):
+#         """测试三个答案会被妥善地存储"""
+#         question = "What language did you first learn to speak?" 
+#         my_survey = AnonymousSurvey(question)
+#         responses = ['English', 'Spanish', 'Mandarin']
+#         for response in responses:
+#             my_survey.store_response(response)
 
-        for response in responses:
-            self.assertIn(response, my_survey.responses)
+#         for response in responses:
+#             self.assertIn(response, my_survey.responses)
 
-unittest.main()
+# unittest.main()
 
 """ 
 我们将这个方法命名为test_store_three_responses()，并像test_store_single_response() 一样，在其中创建一个调查对象。
@@ -171,3 +171,71 @@ OK
 前述做法的效果很好，但这些测试有些重复的地方。下面使用unittest的另一项功能来提高它们的效率。
 
 """
+
+
+# ===========================================================
+print('\n方法setUp()')
+# 在前面的test_survey.py中，我们在每个测试方法中都创建了一个AnonymousSurvey实例，并在每个方法中都创建了答案。
+# unittest.TestCase类包含方法setUp()，让我们只需创建这些对象一次，并在每个测试方法中使用它们。
+# 如果你在TestCase类中包含了方法setUp()，Python将先运行它，再运行各个以test_打头的方法。
+# 这样，在你编写的每个测试方法中都可使用在方法setUp()中创建的对象了。
+
+""" 
+下面使用setUp()来创建一个调查对象和一组答案，供方法test_store_single_response()和 test_store_three_responses()使用:
+"""
+import unittest
+from survey import AnonymousSurvey
+
+class TestAnonymousSurvey(unittest.TestCase):
+    """针对AnonymousSurvey类的测试"""
+    def setUp(self):
+        """创建一个调查对象和一组答案，供使用的测试方法使用"""
+        question = "What language did you first learn to speak?"
+        self.my_survey = AnonymousSurvey(question)
+        self.responses = ['English', 'Spanish', 'Mandarin']
+
+    def test_store_single_response(self):
+        """测试单个答案会被妥善地存储"""
+        self.my_survey.store_response(self.responses[0])
+        self.assertIn(self.responses[0], self.my_survey.responses)
+    
+    def test_store_three_responses(self):
+        """测试三个答案会被妥善地存储"""
+        for response in self.responses:
+            self.my_survey.store_response(response)
+
+        for response in self.responses:
+            self.assertIn(response, self.my_survey.responses)
+
+unittest.main()
+
+"""
+方法setUp()做了两件事情:
+    创建一个调查对象(见Ø);
+    创建一个答案列表(见)。
+存储这两样东西的变量名包含前缀self(即存储在属性中)，因此可在这个类的任何地方使用。
+这让两个测试方法都更简单，因为它们都不用创建调查对象和答案。
+
+方法test_store_three_response() 核实self.responses中的第一个答案——self.responses[0]——被妥善地存储，
+而方法test_store_three_response()核实self.responses中的全部三个答案都被妥善地存储。
+
+再次运行test_survey.py时，这两个测试也都通过了。
+如果要扩展AnonymousSurvey，使其允许每位用户输入多个答案，这些测试将很有用。
+修改代码以接受多个答案后，可运行这些测试，确认存储单个答案或一系列答案的行为未受影响。
+
+测试自己编写的类时，方法setUp()让测试方法编写起来更容易:
+可在setUp()方法中创建一系列实例并设置它们的属性，再在测试方法中直接使用这些实例。
+相比于在每个测试方法中都创建实例并设置其属性，这要容易得多。
+
+# 注意
+运行测试用例时，每完成一个单元测试，Python都打印一个字符:
+测试通过时打印一个句点;
+测试引发错误时打印一个E;
+测试导致断言失败时打印一个F。
+
+这就是你运行测试用例时，在输出的第一行中看到的句点和字符数量各不相同的原因。
+如果测试用例包含很多单元测试，需要运行很长时间，就可通过观察这些结果来获悉有多少个测试通过了。
+
+"""
+
+
