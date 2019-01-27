@@ -3,6 +3,8 @@
 ```
 ├── .vscode                // vscode配置文件
 ├── other                  // 其他的练习功课代码
+├── practise               // 练习项目目录
+│   └── ...                // 练习项目
 ├── py_number_message      // py学习的大章节及章节title
 │   └── ...                // py章节学习的内容
 │   └── __pycache__        // py import模块缓存文件
