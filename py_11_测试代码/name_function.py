@@ -11,11 +11,23 @@ def get_formatted_name(first, last):
 # 程序names.py让用户输入名和姓，并显示整洁的全名:
 
 
-
+# 下面是函数get_formatted_name()的新版本，它要求通过一个实参指定中间名:
 def get_formatted_name_two(first, middle, last):
     """生成整洁的姓名"""
     full_name = first + ' ' + middle + ' ' + last
     return full_name.title()
+
+
+# 要将中间名设置为可选的，可在函数定义中将形参middle移到形参列表末尾，并将其默认值指定为一个空字符串。
+# 我们还要添加一个if测试，以便根据是否提供了中间名相应地创建姓名:
+def get_formatted_name_three(first, last, middle=''):
+    """生成整洁的姓名"""
+    if middle:
+        full_name = first + ' ' + middle + ' ' + last
+    else:
+        full_name = first + ' ' + last
+    return full_name.title()
+
 
 
 
