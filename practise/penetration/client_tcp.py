@@ -17,6 +17,16 @@ response = client.recv(4096)
 
 print(response)
 
+"""
+    1.创建一个包含AF_INET和SOCK_STREAM参数的socket对象（7）
+        AF_INET         说明我们将使用标准的ipv4地址或主机名
+        SOCK_STREAM     说明这将是一个tcp客户端
+    2.然后我们将客户端链接服务器（10）并发送一些数据（13）
+    3.最后一步是接受返回的数据并将相应数据打印出来
+"""
+
+
+
 
 """ 
 注意:
@@ -24,8 +34,6 @@ print(response)
     2. send() 向服务器端发送编码后的数据（二进制字节）,编码方法encode(),解码decode()
         :::py3需要如此,py2书上列子没有
     3. 
-
-
 """
 
 
