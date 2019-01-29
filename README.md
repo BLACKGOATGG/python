@@ -1,7 +1,8 @@
 ## 项目目录结构
 
 ```
-├── .vscode                                     // vscode配置文件
+├── .vscode
+├── .gitignore
 ├── basic-knowledge                             // py学习基础知识目录
 │   └── py_${number}_${message}                 // py学习的大章节及章节title
 │       └── __pycache__
@@ -20,8 +21,7 @@
 ├── practise-project                            // 练习项目目录
 │   └── ...                                     
 │
-├── other                                       // 其他的练习功课代码
+├── 更多                                         // 其他的练习功课代码
 ├── 总结                                         // 部分总结与踩坑记录
-├── .gitignore
 ├── README.md
 ```
