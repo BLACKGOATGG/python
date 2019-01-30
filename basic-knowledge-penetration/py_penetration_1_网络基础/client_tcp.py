@@ -1,6 +1,9 @@
 import socket
+from lib import *
 
-target_host = '10.200.21.32'  #标准的ipv4地址或主机名
+
+host_ip = helper.get_host_ip()
+target_host = host_ip  #标准的ipv4地址或主机名
 target_port = 80
 
 # 建立一个socket对象
@@ -10,7 +13,8 @@ client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((target_host,target_port))
 
 # 发送一些数据
-client.send('GET / HTTP/1.1\r\nHost:10.200.21.32\r\n\r\n'.encode())
+contents = 'GET / HTTP/1.1\r\nHost:'+ target_host +'\r\n\r\n'
+client.send(contents.encode())
 
 # 接受一些数据
 response = client.recv(4096)
@@ -18,10 +22,10 @@ response = client.recv(4096)
 print(response)
 
 """
-    1.创建一个包含AF_INET和SOCK_STREAM参数的socket对象（7）
+    1.创建一个包含AF_INET和SOCK_STREAM参数的socket对象
         AF_INET         说明我们将使用标准的ipv4地址或主机名
         SOCK_STREAM     说明这将是一个tcp客户端
-    2.然后我们将客户端链接服务器（10）并发送一些数据（13）
+    2.然后我们将客户端链接服务器并发送一些数据
     3.最后一步是接受返回的数据并将相应数据打印出来
 
     在以上代码段中，你应该注意到我们对套接字做了一定的假设：
