@@ -15,29 +15,23 @@
 import socket
 from lib import *
 
-print(1)
 
 host_ip = helper.get_host_ip()
-target_host = host_ip  #标准的ipv4地址或主机名
-target_port = 80
-print(2)
+target_host = '127.0.0.1'  #标准的ipv4地址或主机名
+target_port = 9999
 
 # 建立一个socket对象
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-print(3)
 
 # 连接到客户端
 client.connect((target_host,target_port))
-print(4)
 
 # 发送一些数据
 contents = 'GET / HTTP/1.1\r\nHost:'+ target_host +'\r\n\r\n'
 client.send(contents.encode())
-print(5)
 
 # 接受一些数据
 response = client.recv(4096)
-print(6)
 
 print(response)
 
