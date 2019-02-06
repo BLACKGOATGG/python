@@ -28,17 +28,10 @@ port                 = 0
 """
 这里导入了说有需要的py库并设置了些全局变量。
 接下来创建主函数处理命令行参数和调用编写的其他函数。
-
-usage()函数用于参数的说明帮助、当用户输入错误的参数时会输出相应的提示；
-client_sender()函数用于与目标主机建立连接并交互数据直到没有更多的数据发送回来，然后等待用户下一步的输入并继续发送和接收数据，直到用户结束脚本运行；
-server_loop()函数用于建立监听端口并实现多线程处理新的客户端；
-run_command()函数用于执行命令，其中subprocess库提供多种与客户端程序交互的方法；
-client_handler()函数用于实现文件上传、命令执行和与shell相关的功能，其中wb标识确保是以二进制的格式写入文件、从而确保上传和写入的二进制文件能够成功执行；
-主函数main()中是先读取所有的命令行选项从而设置相应的变量，然后从标准输入中读取数据并通过网络发送数据，若需要交互式地发送数据需要发送CTRL-D以避免从标准输入中读取数据，若检测到listen参数为True则调用server_loop()函数准备处理下一步命令。
-
 """
 
 def usage():
+    """ usage()函数用于参数的说明帮助、当用户输入错误的参数时会输出相应的提示 """
     print('BHP Net Tool\n')
     print('Usage: bhpnet.py -t target_host -p port')
     print('-l --listen              - listen on [host]:[port] for incoming connections')
@@ -54,6 +47,7 @@ def usage():
     sys.exit(0)
 
 def run_command(command):
+    """ run_command()函数用于执行命令，其中subprocess库提供多种与客户端程序交互的方法； """
     # 删除字符串末尾的空格
     command = command.rstrip()
     # 运行命令并将输出放回
@@ -65,6 +59,10 @@ def run_command(command):
     return output
 
 def clients_sender(buffer):
+    """
+        clients_sender()函数用于与目标主机建立连接并交互数据直到没有更多的数据发送回来，
+        然后等待用户下一步的输入并继续发送和接收数据，直到用户结束脚本运行；
+    """
     print('clients_sender')
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -113,7 +111,7 @@ def clients_sender(buffer):
     """
 
 def server_loop():
-    print('server_loop')
+    """ server_loop()函数用于建立监听端口并实现多线程处理新的客户端； """
     global target
 
     # 如果没有定义目标，那么我们监听所有接口
@@ -132,6 +130,10 @@ def server_loop():
         client_thread.start()
 
 def client_handler(client_socket):
+    """
+        client_handler()函数用于实现文件上传、命令执行和与shell相关的功能，
+        其中wb标识确保是以二进制的格式写入文件、从而确保上传和写入的二进制文件能够成功执行；
+    """
     print('client_handler')
     global upload
     global execute
@@ -204,6 +206,12 @@ def client_handler(client_socket):
     """
 
 def main():
+    """
+        主函数main()中是先读取所有的命令行选项从而设置相应的变量，
+        然后从标准输入中读取数据并通过网络发送数据，
+        若需要交互式地发送数据需要发送CTRL-D以避免从标准输入中读取数据，
+        若检测到listen参数为True则调用server_loop()函数准备处理下一步命令。
+    """
     global listen
     global command
     global execute
