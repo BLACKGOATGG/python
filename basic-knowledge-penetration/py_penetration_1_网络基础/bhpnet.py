@@ -32,14 +32,13 @@ port                 = 0
 
 def usage():
     """ usage()函数用于参数的说明帮助、当用户输入错误的参数时会输出相应的提示 """
-    print('BHP Net Tool\n')
+    print('\n\nBHP Net Tool\n')
     print('Usage: bhpnet.py -t target_host -p port')
     print('-l --listen              - listen on [host]:[port] for incoming connections')
     print('-c --command             - execute the given file upon receiving a connection')
     print('-u --upload=destination  - initialize a command shell')
     print('-e --execute=file_to_run - upon receiving connection upload a file and write to [dextination]')
-    print('\n')
-    print('Examples:')
+    print('\nExamples:')
     print('bhpnet.py -t 192.168.0.1 -p 5555 -l -c')
     print('bhpnet.py -t 192.168.0.1 -p 5555 -l -u=c:\\target.exe')
     print('bhpnet.py -t 192.168.0.1 -p 5555 -l -e=\'cat /etc/passwd\'')
@@ -223,15 +222,19 @@ def main():
         usage()
 
     # 读取命令行选项
-    l = ['help', 'listen', 'command', 'upload', 'execute', 'target', 'port']
+    l = ['help', 'execute', 'listen', 'target', 'port', 'command', 'upload']
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hel:t:p:cu:", l)
+        opts, args = getopt.getopt(sys.argv[1:], "he:lt:p:cu:", l)
+        print('分析出格式信息的命令行参数==>', opts)
+        print('不属于格式信息的命令行参数==>', args)
     except getopt.GetoptError as err:
         print(str(err))
         usage()
 
 
+    print({'o':'开关及形参','a':'对应实参参数'})
     for o,a in opts:
+        print({'o':o,'a':a})
         if o in ('-h', '--help'):
             usage()
         elif o in ('-l', '--listen'):
