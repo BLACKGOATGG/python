@@ -203,7 +203,7 @@ def server_loop():
 
     while True:
         client_socket, addr = server.accept()
-
+        print(addr)
         # 分析一个线程处理新的客户端
         client_thread = threading.Thread(target=client_handler, args=(client_socket,))
         client_thread.start()
