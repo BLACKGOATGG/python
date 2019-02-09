@@ -45,18 +45,7 @@ def usage():
     print('echo: "ABCDEFGHI" | ./bhpnet.py -t 192.168.11.12 -p 135')
     sys.exit(0)
 
-def run_command(command):
-    """ run_command()函数用于执行命令，其中subprocess库提供多种与客户端程序交互的方法； """
-    # 删除字符串末尾的空格
-    command = command.rstrip()
-    # 运行命令并将输出放回
-    try:
-        output = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
-    except:
-        output = "Failed to execute command.\r\n"
-    # 将输出发送
-    return output
-
+# function 1 start and end
 def clients_sender(buffer):
     """
         clients_sender()函数用于与目标主机建立连接并交互数据直到没有更多的数据发送回来，
@@ -109,25 +98,20 @@ def clients_sender(buffer):
         用来对命令行shell的创建和命令的执行处理
     """
 
-def server_loop():
-    """ server_loop()函数用于建立监听端口并实现多线程处理新的客户端； """
-    global target
+# function 2-3 end
+def run_command(command):
+    """ run_command()函数用于执行命令，其中subprocess库提供多种与客户端程序交互的方法； """
+    # 删除字符串末尾的空格
+    command = command.rstrip()
+    # 运行命令并将输出放回
+    try:
+        output = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
+    except:
+        output = "Failed to execute command.\r\n"
+    # 将输出发送
+    return output
 
-    # 如果没有定义目标，那么我们监听所有接口
-    if not len(target):
-        target = '0.0.0.0'
-    
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((target, port))
-    server.listen(5)
-
-    while True:
-        client_socket, addr = server.accept()
-
-        # 分析一个线程处理新的客户端
-        client_thread = threading.Thread(target=client_handler, args=(client_socket,))
-        client_thread.start()
-
+# function 2-2
 def client_handler(client_socket):
     """
         client_handler()函数用于实现文件上传、命令执行和与shell相关的功能，
@@ -203,6 +187,27 @@ def client_handler(client_socket):
         你会注意到函数在扫描每一行的换行字符以决定何时处理命令，这就会让它和netcat一样好用。
         然而，如果你自己编写一个py客户端与它交互，那么要记得添加换行符。
     """
+
+# function 2-1 start
+def server_loop():
+    """ server_loop()函数用于建立监听端口并实现多线程处理新的客户端； """
+    global target
+
+    # 如果没有定义目标，那么我们监听所有接口
+    if not len(target):
+        target = '0.0.0.0'
+    
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind((target, port))
+    server.listen(5)
+
+    while True:
+        client_socket, addr = server.accept()
+
+        # 分析一个线程处理新的客户端
+        client_thread = threading.Thread(target=client_handler, args=(client_socket,))
+        client_thread.start()
+
 
 def main():
     """
