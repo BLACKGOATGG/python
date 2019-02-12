@@ -106,6 +106,7 @@ def run_command(command):
     # 运行命令并将输出放回
     try:
         output = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
+        output = output.decode()
     except:
         output = "Failed to execute command.\r\n"
     # 将输出发送
@@ -171,7 +172,7 @@ def client_handler(client_socket):
             response = run_command(cmd_buffer)
 
             # 返回相应数据
-            client_socket.send(response)
+            client_socket.send(response.encode())
     """
         第一段的代码负责检测我们网络工具在建立连接之后是否设置为接收文件，
         这样有助于我们上传和执行测试脚本、安装恶意软件或者让恶意软件清除我们的py脚本
