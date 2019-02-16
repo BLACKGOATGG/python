@@ -55,15 +55,18 @@ def clients_sender(buffer):
         clients_sender()函数用于与目标主机建立连接并交互数据直到没有更多的数据发送回来，
         然后等待用户下一步的输入并继续发送和接收数据，直到用户结束脚本运行；
     """
+    print('创建socket服务')    
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    print('创建socket服务完成')    
 
     try:
         # 连接服务器
+        print('连接目标主机') 
         client.connect((target, port))
-        logging.info('目标主机   %s:%d' % (target, port))
+        print('目标主机已连接   %s:%d' % (target, port))
 
         if len(buffer):
-            logging.info("发送消息：%s" % buffer)
+            print("发送：%s" % buffer)
             client.send(buffer.encode())
 
         while True:
@@ -73,10 +76,10 @@ def clients_sender(buffer):
 
             while recv_len:
                 data        = client.recv(4096)
-                logging.debug("data:%s" % type(data))
+                print("data:%s" % type(data), data)
 
                 response    += data.decode("utf-8")
-                logging.debug("response:%s" % type(response))
+                print("response:%s" % type(response), response)
 
                 # 如果小于4096就表示数据已经接受完毕。
                 if recv_len < 4096:  
@@ -88,11 +91,11 @@ def clients_sender(buffer):
             buffer = input('')
             buffer += '\n'
             # 发送
-            logging.info("发送消息：%s" % buffer)
+            print("发送：%s" % buffer)
             client.send(buffer.encode())
 
     except Exception as e:
-        logging.debug(e)
+        print(e)
         print("[*] Exception! Exiting.")
     finally:
         # teardown the connection
@@ -117,21 +120,23 @@ def run_command(command):
     """ run_command()函数用于执行命令，其中subprocess库提供多种与客户端程序交互的方法； """
     # 删除字符串末尾的空格
     command = command.rstrip()
+    print("执行命令: %s" % command)        
 
-    # 运行命令并将输出放回
+    # 运行命令并将输出返回
     try:
         output = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
     except Exception as e:
-        logging.info(e)
+        print(e)
         output = "Failed to execute command.\r\n"
 
     # 将输出发送
-    logging.info("output:%s  |||   %s" % (type(output), output))
+    print("输出:%s  |||   %s" % (type(output), output))
     return output
 
 
 # function 2-2  服务端线程，处理客户的连接任务。
 def client_handler(client_socket):
+    print("新建线程处理客户的连接任务")
     """
         client_handler()函数用于实现文件上传、命令执行和与shell相关的功能，
         其中wb标识确保是以二进制的格式写入文件、从而确保上传和写入的二进制文件能够成功执行；
@@ -142,10 +147,12 @@ def client_handler(client_socket):
 
     # 检测上传文件=============1
     if len(upload_destination):
+        print("检测到上传文件")
         # 读取所有字符并写下目标
         file_buffer = ''
 
         # 持续读取数据直到没符合的数据============2
+        print("接受数据")
         while True:
             data = client_socket.recv(1024)
             if not data:
@@ -155,6 +162,7 @@ def client_handler(client_socket):
         
         # 现在我们接受这些数据并将他们写出来============3
         try:
+            print("写入文件")
             file_descriptor = open(upload_destination,'wb')
             file_descriptor.write(file_buffer)
             file_descriptor.close()
@@ -167,25 +175,31 @@ def client_handler(client_socket):
     
     # 检查命令执行
     if len(execute):
+        print("检查命令执行")
         # 运行命令
         output = run_command(execute)
         client_socket.send(output)
 
     # 如果需要一个命令行shell，那么我们进入另一个循环============4
     if command:
+        print("建立命令行shell")
         while True:
             # 跳出一个窗口
+            print("建立成功，发送BHP窗口")
             client_socket.send(b"<BHP:#> ")
             
             # 现在我们接收文件直到发现换行符
+            print("接受客户端命令")
             cmd_buffer = ''
             while '\n' not in cmd_buffer:
                 cmd_buffer += client_socket.recv(1024).decode("utf-8")
             
             # 返回命令行输出
+            print("执行客户端命令")
             response = run_command(cmd_buffer)
 
             # 返回相应数据
+            print("返回命令处理结果")
             client_socket.send(response)
     """
         第一段的代码负责检测我们网络工具在建立连接之后是否设置为接收文件，
@@ -215,14 +229,15 @@ def server_loop():
     if not len(target):
         target = '0.0.0.0'
     
+    print("建立socket-tcp服务器")
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((target, port))
-    logging.info("Listen    %s:%d" % (target, port))
+    print("建立socket-tcp服务器完成，监听    %s:%d" % (target, port))
     server.listen(5)
 
     while True:
         client_socket, addr = server.accept()
-        logging.info("服务接受    %s:%d" % addr)
+        print("服务接受    %s:%d" % addr)
         # 分析一个线程处理新的客户端
         client_thread = threading.Thread(target=client_handler, args=(client_socket,))
         client_thread.start()
