@@ -3,15 +3,13 @@ import socket
 import getopt
 import threading
 import subprocess
-
 listen               = False
 command              = False
 upload               = False
+upload_destination   = ''
 execute              = ''
 target               = ''
-upload_destination   = ''
 port                 = 0
-
 def usage():
     print('\n\nBHP Net Tool\n')
     print('Usage: bhpnet.py -t target_host -p port')
@@ -25,7 +23,6 @@ def usage():
     print('bhpnet.py -t 192.168.0.1 -p 5555 -l -e=\'cat /etc/passwd\'')
     print('echo: "ABCDEFGHI" | ./bhpnet.py -t 192.168.11.12 -p 135')
     sys.exit(0)
-
 def clients_sender(buffer):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
@@ -34,33 +31,30 @@ def clients_sender(buffer):
             client.send(buffer.encode())
         while True:
             recv_len = 1
-            response = 1
+            response = ''
             while recv_len:
                 data        = client.recv(4096)
-                recv_len    = len(data)
-                response    += data
-                if recv_len < 4096:
+                response    += data.decode("utf-8")
+                if recv_len < 4096:  
                     break
             buffer = input('')
             buffer += '\n'
             client.send(buffer.encode())
-    except:
-        print('[*] Exception! Exiting.')
+    except Exception as e:
+        print("[*] Exception! Exiting.")
+    finally:
         client.close()
-
 def run_command(command):
     command = command.rstrip()
     try:
         output = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
-    except:
+    except Exception as e:
         output = "Failed to execute command.\r\n"
     return output
-
 def client_handler(client_socket):
     global upload
     global execute
     global command
-
     if len(upload_destination):
         file_buffer = ''
         while True:
@@ -73,27 +67,22 @@ def client_handler(client_socket):
             file_descriptor = open(upload_destination,'wb')
             file_descriptor.write(file_buffer)
             file_descriptor.close()
-            text = 'Successfully saved file to %s\r\n' % upload_destination
-            client_socket.send(text.encode())
+            client_socket.send("Successfully saved file to %s\r\n" % upload_destination)
         except:
-            text = 'Failed to save file to %s\r\n' % upload_destination
-            client_socket.send(text.encode())
-    
+            client_socket.send("Failed to saved file to %s\r\n" % upload_destination)
     if len(execute):
         output = run_command(execute)
-        client_socket.send(output.encode())
-
+        client_socket.send(output)
     if command:
         while True:
-            client_socket.send(str.encode('<BHP:#>'))
             cmd_buffer = ''
             while '\n' not in cmd_buffer:
-                cmd_buffer += client_socket.recv(1024)
+                cmd_buffer += client_socket.recv(1024).decode("utf-8")
             response = run_command(cmd_buffer)
             client_socket.send(response)
-
 def server_loop():
     global target
+    global port
     if not len(target):
         target = '0.0.0.0'
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -103,7 +92,6 @@ def server_loop():
         client_socket, addr = server.accept()
         client_thread = threading.Thread(target=client_handler, args=(client_socket,))
         client_thread.start()
-
 def main():
     global listen
     global command
@@ -117,7 +105,6 @@ def main():
     try:
         opts, args = getopt.getopt(sys.argv[1:], "he:lt:p:cu:", l)
     except getopt.GetoptError as err:
-        print(str(err))
         usage()
     for o,a in opts:
         if o in ('-h', '--help'):
@@ -141,22 +128,5 @@ def main():
         clients_sender(beffer)
     if listen:
         server_loop()
-   
-main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+if __name__ == "__main__":
+    main()
