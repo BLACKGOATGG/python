@@ -262,9 +262,9 @@ def main():
         usage()
 
     # 读取命令行选项
-    l = ['help', 'execute', 'listen', 'target', 'port', 'command', 'upload']
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "he:lt:p:cu:", l)
+        l = ['help', 'listen', 'command', 'target=', 'port=', 'execute=', 'upload=']
+        opts, args = getopt.getopt(sys.argv[1:], "hlct:p:e:u:", l)
         print('分析出格式信息的命令行参数==>', opts)
         print('不属于格式信息的命令行参数==>', args)
     except getopt.GetoptError as err:
